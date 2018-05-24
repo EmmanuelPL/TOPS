@@ -1,3 +1,5 @@
+#include "Tools.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -5,6 +7,8 @@
 #include <sys/wait.h>
 #include <signal.h>
 #include <string.h>
+
+
 /*
 pid_t fork(void);
 pid_t wait(int *status);
@@ -19,83 +23,68 @@ int execvp(const char *file, char *const argv[]);
 hijos con waitpid()
 */
 
+#define MAX_TOKEN_LENGTH 512
 #define PROMPT_SIMBOL "#"
 #define EXIT_COMMAND "salir"
-#define ZOMBIE_CHECK_INTERVAL 5
 #define DEBUG 0
 
-void zombie_guard(int);
+void death_handler(int);
 
-// Stores the trimmed input string into the given output buffer, which must be
-// large enough to store the result.  If it is too small, the output is
-// truncated.
-size_t trimwhitespace(char *out, size_t len, const char *str)
-{
-    if(len == 0)
-        return 0;
-
-    const char *end;
-    size_t out_size;
-
-    // Trim leading space
-    while(isspace((unsigned char)*str)) str++;
-
-    if(*str == 0)  // All spaces?
-    {
-        *out = 0;
-        return 1;
-    }
-
-    // Trim trailing space
-    end = str + strlen(str) - 1;
-    while(end > str && isspace((unsigned char)*end)) end--;
-    end++;
-
-    // Set output size to minimum of trimmed string length and buffer size minus 1
-    out_size = (end - str) < len-1 ? (end - str) : len-1;
-
-    // Copy trimmed string and add null terminator
-    memcpy(out, str, out_size);
-    out[out_size] = 0;
-
-    return out_size;
-}
 
 int main(int argc, char **argv) {
     pid_t pid;
-    signal(SIGALRM, zombie_guard);
-    alarm(ZOMBIE_CHECK_INTERVAL);
+    signal(SIGCHLD, death_handler);
     
-    char comando[256];
+    size_t len = 0;
+    char *comando_raw;
+    char *comando;
+
+
     int  status;
 
     char *p = NULL;
-    int   esback = 0;
+    int  esback = 0;
     
     do {
         // muestro prompt del shell
         printf(PROMPT_SIMBOL);
         
-        // ingreso comando
-        fgets(comando, 256, stdin);
+
+        // libero espacio
+        if (len > 0) {
+            free(comando_raw);
+            free(comando);
+
+            len = 0;
+        }
+
+        // ingreso comando_raw
+        len = fetchline(&comando_raw);
         
-        // quito enter final
-        comando[strlen(comando)-1] = '\0';
-        
-        //printf("comando: [%s]\n",comando);
+        // reservo espacio
+        comando = malloc(len);
+
+        // Saco los espacios
+        trimwhitespace(comando, len, comando_raw);
+
         if ( strlen(comando) == 0 ) 
             continue;
         
-        if ( strncmp(comando, "salir", 5) != 0 ) {
-            p = strstr(comando, "&");
+        if ( strncmp(comando, EXIT_COMMAND, 5) != 0 ) {
+            // compruevo si esta el &
+            p = strstr(comando_raw, "&");
             esback = p != NULL;
-            
+
+            // Saco el &            
             if ( esback ) *p = '\0';
+
+            // Saco los nuevos espacios
+            trimwhitespace(comando, len, comando_raw);
             
             // creo proceso!
             pid = fork();
-            if ( pid > 0 ) {
-
+            if ( pid > 0 ) 
+            {
                 // codigo del shell (padre)
                 if ( !esback ) {
                     if (DEBUG)
@@ -105,16 +94,21 @@ int main(int argc, char **argv) {
                     waitpid(pid, &status, 0);
 
                     if ( DEBUG && status != 0 ) 
-                        printf("comando [%s] finalizado, st=%d\n", comando, status / 256);
+                        printf("comando [%s] finalizado, st=%d\n", *comando, status / 256);
 
-                } else {
+                } 
+                else 
+                {
                     if (DEBUG) 
                         printf("proceso background %d creado!\n",pid);
                 }
-            } else { 
+            } 
+            else 
+            { 
                 // codigo del hijo, nuevo proceso creado
                 // cambio ese codigo por el comando que solicito el usuario
-                if ( execlp(comando, comando, NULL) == -1) {
+                if ( execlp(comando, comando, NULL) == -1) 
+                {
 
                     printf("Comando [%s] no reconocido!\n", comando);
                     exit(EXIT_SUCCESS);
@@ -127,17 +121,17 @@ int main(int argc, char **argv) {
    exit(EXIT_SUCCESS);
 }
 
-void zombie_guard(int signo) {
+void death_handler(int signo) 
+{
     int status = 0;
 
     pid_t pid = waitpid(-1, &status, WNOHANG);
 
-    while( (pid != -1) && (pid != 0) ){
+    while( (pid != -1) && (pid != 0) )
+    {
         if (DEBUG)
-            printf("proceso background [%d] finalizado st=%d!\n",pid,status/256);
+            printf("proceso background [%d] finalizado st=%d!\n", pid, status / 256);
 
         pid = waitpid(-1, &status, WNOHANG);
     }
-
-    alarm(ZOMBIE_CHECK_INTERVAL);
 }
