@@ -105,9 +105,13 @@ int main(int argc, char **argv) {
                 // cambio ese codigo por el comando que solicito el usuario
                 if ( execvp(tokens[0], tokens) == -1) 
                 {
-
                     printf("Comando [%s] no reconocido!\n", tokens[0]);
                 }
+
+
+                exit(EXIT_SUCCESS);
+            }
+
             // Libero memoria
             size_t c = 0;
             while (c < length) {
