@@ -5,6 +5,8 @@
 #include <string.h>
 #include <ctype.h>
 
+#define DEBUG 0
+
 /**
  *  From
  *  https://stackoverflow.com/questions/34695410/is-there-a-good-alternative-to-fgets 
@@ -89,35 +91,49 @@ size_t trimwhitespace(char *out, size_t len, const char *str)
  */
 size_t tokenize(char * out[], const char* strI) 
 {
+    if (DEBUG)
+        printf("Init\n");
+
     size_t len_size =  sizeof(char) * strlen(strI);
     size_t c  = 0;
 
     char* str;
 
+    // Creo una copia del strI para que el original No se modifique
     if ((str = malloc(len_size)) == NULL)
         return 0;
 
-    // Creo una copia del strI para que el original No se modifique
     strcpy(str, strI);
 
-
-
     // busco los tokens
+    if (DEBUG)
+        printf("Search for tokens in '%s'...\n", str);
+
     char * pch;
     pch = strtok(str," ,.-");
 
     while (pch != NULL)
     {
+        if (DEBUG)
+            printf("FOUND! ");
+        
         if ((out[c] = malloc(len_size)) == NULL)
             return c;
 
         // Copio el token al array
         strcpy(out[c], pch);
 
+        if (DEBUG)
+            printf("fond a token with %d of length\n", strlen(out[c]));
+
         // apunto al proximo token
         pch = strtok(NULL, " ,.-");
         ++c;
     }
+
+    if (DEBUG)
+        printf("Free memory\n");
+
 
     // libero la memoria de la copia temporal
     free(str);
