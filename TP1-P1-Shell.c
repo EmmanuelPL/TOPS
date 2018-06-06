@@ -8,8 +8,8 @@
 #include <signal.h>
 #include <string.h>
 
-#define PROMPT_SIMBOL "#"
 #define MAX_TOKENS 255
+#define PROMPT_SIMBOL "Zhu Li! Do the thing! -> "
 #define EXIT_COMMAND "salir"
 #define EXIT_LENGTH 5
 #define DEBUG 0
