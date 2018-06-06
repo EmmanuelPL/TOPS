@@ -22,8 +22,6 @@ size_t trimwhitespace(char *out, size_t len, const char *str);
 /**
  * @brief Genera tokens a partir de un string
  * @details Genera un array de string con los tokens de un string.
- * En la primera posicion se almacena el string original (solo por vicio)
- * 
  * @author Emmanuel Posadas L. <emmanuel.posadasl@gmail.com>
  * 
  * @param out Array con los tokens

@@ -79,7 +79,6 @@ size_t trimwhitespace(char *out, size_t len, const char *str)
 /**
  * @brief Genera tokens a partir de un string
  * @details Genera un array de string con los tokens de un string.
- * En la primera posicion se almacena el string original (solo por vicio)
  * 
  * @author Emmanuel Posadas L. <emmanuel.posadasl@gmail.com>
  * 
@@ -91,7 +90,7 @@ size_t trimwhitespace(char *out, size_t len, const char *str)
 size_t tokenize(char * out[], const char* strI) 
 {
     size_t len_size =  sizeof(char) * strlen(strI);
-    size_t c  = 1;
+    size_t c  = 0;
 
     char* str;
 
@@ -102,11 +101,6 @@ size_t tokenize(char * out[], const char* strI)
     strcpy(str, strI);
 
 
-    if ((out[0] = malloc(len_size)) == NULL)
-        return 0;
-
-    // Agrego el string original en la primera posicion solo por vicio
-    strcpy(out[0], str);
 
     // busco los tokens
     char * pch;
