@@ -110,7 +110,7 @@ size_t tokenize(char * out[], const char* strI)
         printf("Search for tokens in '%s'...\n", str);
 
     char * pch;
-    pch = strtok(str," ,.-");
+    pch = strtok(str," ");
 
     while (pch != NULL)
     {
@@ -127,7 +127,7 @@ size_t tokenize(char * out[], const char* strI)
             printf("fond a token with %d of length\n", strlen(out[c]));
 
         // apunto al proximo token
-        pch = strtok(NULL, " ,.-");
+        pch = strtok(NULL, " ");
         ++c;
     }
 
