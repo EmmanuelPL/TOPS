@@ -8,8 +8,6 @@
 #include <signal.h>
 #include <string.h>
 
-
-#define MAX_TOKEN_LENGTH 512
 #define PROMPT_SIMBOL "#"
 #define MAX_TOKENS 255
 #define EXIT_COMMAND "salir"
