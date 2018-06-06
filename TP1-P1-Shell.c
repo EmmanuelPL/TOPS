@@ -11,6 +11,7 @@
 
 #define MAX_TOKEN_LENGTH 512
 #define PROMPT_SIMBOL "#"
+#define MAX_TOKENS 255
 #define EXIT_COMMAND "salir"
 #define DEBUG 0
 
@@ -66,6 +67,14 @@ int main(int argc, char **argv) {
 
             // Saco los nuevos espacios
             trimwhitespace(comando, len, comando_raw);
+
+            
+            // Busco por tokens
+            char* tokens[MAX_TOKENS];
+            size_t length = tokenize(tokens, comando);
+
+            // La lista tiene que terminar con un puntero a null
+            tokens[length] = NULL;
             
             // creo proceso!
             pid = fork();
@@ -93,12 +102,16 @@ int main(int argc, char **argv) {
             { 
                 // codigo del hijo, nuevo proceso creado
                 // cambio ese codigo por el comando que solicito el usuario
-                if ( execlp(comando, comando, NULL) == -1) 
+                if ( execvp(tokens[0], tokens) == -1) 
                 {
 
-                    printf("Comando [%s] no reconocido!\n", comando);
-                    exit(EXIT_SUCCESS);
+                    printf("Comando [%s] no reconocido!\n", tokens[0]);
                 }
+            // Libero memoria
+            size_t c = 0;
+            while (c < length) {
+                free(tokens[c]);
+                ++c;
             }
         }
 
