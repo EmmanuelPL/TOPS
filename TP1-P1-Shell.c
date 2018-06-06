@@ -9,20 +9,6 @@
 #include <string.h>
 
 
-/*
-pid_t fork(void);
-pid_t wait(int *status);
-pid_t waitpid(pid_t pid, int *status, int options);
-
-int execl(const char *path, const char *arg, ...);
-int execlp(const char *file, const char *arg, ...);
-int execle(const char *path, const char *arg , ..., char * const envp[]);
-int execv(const char *path, char *const argv[]);
-int execvp(const char *file, char *const argv[]);
-
-hijos con waitpid()
-*/
-
 #define MAX_TOKEN_LENGTH 512
 #define PROMPT_SIMBOL "#"
 #define EXIT_COMMAND "salir"
