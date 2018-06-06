@@ -29,4 +29,4 @@ size_t trimwhitespace(char *out, size_t len, const char *str);
  * 
  * @return cantidad de elementos del array
  */
-size_t tokenize(char * out[], char* str);
+size_t tokenize(char * out[], const char* str);
