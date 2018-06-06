@@ -13,6 +13,7 @@
 #define PROMPT_SIMBOL "#"
 #define MAX_TOKENS 255
 #define EXIT_COMMAND "salir"
+#define EXIT_LENGTH 5
 #define DEBUG 0
 
 void death_handler(int);
@@ -57,7 +58,7 @@ int main(int argc, char **argv) {
         if ( strlen(comando) == 0 ) 
             continue;
         
-        if ( strncmp(comando, EXIT_COMMAND, 5) != 0 ) {
+        if ( strncmp(comando, EXIT_COMMAND, EXIT_LENGTH) != 0 ) {
             // compruevo si esta el &
             p = strstr(comando_raw, "&");
             esback = p != NULL;
@@ -115,7 +116,7 @@ int main(int argc, char **argv) {
             }
         }
 
-   } while( strncmp(comando, "salir", 5) != 0);
+   } while( strncmp(comando, EXIT_COMMAND, EXIT_LENGTH) != 0);
    
    exit(EXIT_SUCCESS);
 }
