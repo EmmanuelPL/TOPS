@@ -88,8 +88,8 @@ int main(int argc, char **argv) {
                     // espero por el proceso hijo
                     waitpid(pid, &status, 0);
 
-                    if ( DEBUG && status != 0 ) 
-                        printf("comando [%s] finalizado, st=%d\n", *comando, status / 256);
+                    if ( (DEBUG) && (status != 0) ) 
+                        printf("comando [%s] finalizado, st=%d\n", comando, status / 256);
 
                 } 
                 else 
